@@ -16,11 +16,11 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
     private val context = getApplication<Application>().applicationContext!!
     val stateLiveData = MutableLiveData<State>()
 
-    class VersionItem(val isFromInternet: Boolean, val versionNickName: String, val version: String, val apiLevel: Int, val marketSharePercentage: Double)
+    class VersionItem(val versionNickName: String, val version: String, val apiLevel: Int, val marketSharePercentage: Double)
 
     sealed class State {
         object Loading : State()
-        class Success(val versionItems: List<VersionItem>) : State()
+        class Success(val isFromInternet: Boolean, val versionItems: List<VersionItem>) : State()
     }
 
     @UiThread
@@ -58,9 +58,9 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
                 val versionName = androidVersionInfo.get("version").asString
                 val versionApiLevel = androidVersionInfo.get("apiLevel").asInt
                 val marketSharePercentage = androidVersionInfo.get("distributionPercentage").asDouble
-                versionItems.add(VersionItem(isFromInternet, versionNickName, versionName, versionApiLevel, marketSharePercentage))
+                versionItems.add(VersionItem(versionNickName, versionName, versionApiLevel, marketSharePercentage))
             }
-            stateLiveData.postValue(State.Success(versionItems))
+            stateLiveData.postValue(State.Success(isFromInternet, versionItems))
         }
     }
 }

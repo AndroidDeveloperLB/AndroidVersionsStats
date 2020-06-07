@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                     progressBar.visibility = View.INVISIBLE
                     resultView.visibility = View.VISIBLE
                     val sb = StringBuilder()
+                    if (!state.isFromInternet)
+                        sb.append("results are not from Internet (some Internet issue)\n")
                     val decimalFormat = DecimalFormat("##.##%")
                     for (versionItem in versionItems) {
                         sb.append("${versionItem.version} - ${versionItem.versionNickName} - API ${versionItem.apiLevel} - ${decimalFormat.format(versionItem.marketSharePercentage)}\n")
