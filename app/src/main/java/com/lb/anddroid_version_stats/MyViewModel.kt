@@ -25,7 +25,8 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
 
     @UiThread
     fun load() {
-        if (stateLiveData.value is State.Success)
+        val currentLiveDataValue = stateLiveData.value
+        if (currentLiveDataValue is State.Loading)
             return
         stateLiveData.value = State.Loading
         thread {

@@ -20,6 +20,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this).get(MyViewModel::class.java)
         viewModel.load()
+        retryButton.setOnClickListener {
+            viewModel.load()
+        }
         viewModel.stateLiveData.observe(this, { state: MyViewModel.State? ->
             when (state) {
                 null, MyViewModel.State.Loading -> {
@@ -32,14 +35,13 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                     resultView.visibility = View.VISIBLE
                     val defaultSharedPreferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
                     val savedResult = defaultSharedPreferences.getString("savedResults", null)
-
                     val sb = StringBuilder()
                     if (!state.isFromInternet && savedResult != null) {
                         sb.append("results are not from Internet (some Internet issue)\n")
                         val savedResultTimeStamp = defaultSharedPreferences.getLong("savedResultsTimeStamp", 0L)
                         if (savedResultTimeStamp != 0L) {
                             val formattedDate = DateFormat.getDateFormat(this)!!.format(Calendar.getInstance().also { it.timeInMillis = savedResultTimeStamp }.time)
-                            sb.append("last time updated: $formattedDate\n")
+                            sb.append("last time queried: $formattedDate\n")
                         }
                         sb.append(savedResult)
                         textView.text = sb.toString()
