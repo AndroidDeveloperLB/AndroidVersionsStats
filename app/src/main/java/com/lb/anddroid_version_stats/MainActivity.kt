@@ -3,6 +3,7 @@ package com.lb.anddroid_version_stats
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.DecimalFormat
+import java.util.*
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private lateinit var viewModel: MyViewModel
@@ -28,14 +30,34 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                     val versionItems = state.versionItems
                     progressBar.visibility = View.INVISIBLE
                     resultView.visibility = View.VISIBLE
+                    val defaultSharedPreferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+                    val savedResult = defaultSharedPreferences.getString("savedResults", null)
+
                     val sb = StringBuilder()
-                    if (!state.isFromInternet)
+                    if (!state.isFromInternet && savedResult != null) {
                         sb.append("results are not from Internet (some Internet issue)\n")
-                    val decimalFormat = DecimalFormat("##.##%")
-                    for (versionItem in versionItems) {
-                        sb.append("${versionItem.version} - ${versionItem.versionNickName} - API ${versionItem.apiLevel} - ${decimalFormat.format(versionItem.marketSharePercentage)}\n")
+                        val savedResultTimeStamp = defaultSharedPreferences.getLong("savedResultsTimeStamp", 0L)
+                        if (savedResultTimeStamp != 0L) {
+                            val formattedDate = DateFormat.getDateFormat(this)!!.format(Calendar.getInstance().also { it.timeInMillis = savedResultTimeStamp }.time)
+                            sb.append("last time updated: $formattedDate\n")
+                        }
+                        sb.append(savedResult)
+                        textView.text = sb.toString()
+                    } else {
+                        if (!state.isFromInternet)
+                            sb.append("results are not from Internet (some Internet issue)\n")
+                        val decimalFormat = DecimalFormat("##.##%")
+                        for (versionItem in versionItems) {
+                            sb.append("${versionItem.version} - ${versionItem.versionNickName} - API ${versionItem.apiLevel} - ${decimalFormat.format(versionItem.marketSharePercentage)}\n")
+                        }
+                        val textToShow = sb.toString()
+                        if (state.isFromInternet) {
+                            defaultSharedPreferences.edit().putString("savedResults", textToShow)
+                                    .putLong("savedResultsTimeStamp", System.currentTimeMillis()).apply()
+                        }
+                        textView.text = textToShow
                     }
-                    textView.text = sb.toString()
+
                 }
             }
         })
