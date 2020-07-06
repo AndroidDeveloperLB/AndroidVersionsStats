@@ -1,4 +1,4 @@
-package com.lb.anddroid_version_stats
+package com.lb.android_version_stats
 
 import android.content.Intent
 import android.net.Uri
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         when (item.itemId) {
             R.id.menuItem_all_my_apps -> url = "https://play.google.com/store/apps/developer?id=AndroidDeveloperLB"
             R.id.menuItem_all_my_repositories -> url = "https://github.com/AndroidDeveloperLB"
-            R.id.menuItem_current_repository_website -> url = "https://github.com/AndroidDeveloperLB/AnddroidVersionsStats"
+            R.id.menuItem_current_repository_website -> url = "https://github.com/AndroidDeveloperLB/AndroidVersionsStats"
         }
         if (url == null)
             return true

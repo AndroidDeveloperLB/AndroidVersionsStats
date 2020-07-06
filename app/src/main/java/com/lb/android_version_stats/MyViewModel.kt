@@ -1,4 +1,4 @@
-package com.lb.anddroid_version_stats
+package com.lb.android_version_stats
 
 import android.app.Application
 import androidx.annotation.UiThread
