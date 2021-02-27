@@ -1,5 +1,6 @@
 package com.lb.android_version_stats
 
+import android.annotation.SuppressLint
 import android.app.Application
 import androidx.annotation.UiThread
 import androidx.lifecycle.AndroidViewModel
@@ -13,7 +14,8 @@ import java.net.URL
 import kotlin.concurrent.thread
 
 class MyViewModel(application: Application) : AndroidViewModel(application) {
-    private val context = getApplication<Application>().applicationContext!!
+    @SuppressLint("StaticFieldLeak")
+    private val context = application.applicationContext
     val stateLiveData = MutableLiveData<State>()
 
     class VersionItem(val versionNickName: String, val version: String, val apiLevel: Int, val marketSharePercentage: Double)
